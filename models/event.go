@@ -47,7 +47,7 @@ func GetAllEvents() ([]Event, error){
 
 	for rows.Next(){
 		var event Event
-		rows.Scan(&event.ID, &event.Name, &event.Description, &event.Location, &event.DateTime, &event.UserID,)
+		err := rows.Scan(&event.ID, &event.Name, &event.Description, &event.Location, &event.DateTime, &event.UserID)
 	
 		if err != nil {
 			return nil, err
@@ -56,4 +56,16 @@ func GetAllEvents() ([]Event, error){
 		events = append(events, event)
 	}
 	return events, nil
+}
+
+func GetEventByID(id int64)(*Event, error){
+	query := "SELECT * FROM events WHERE id = ?"
+	row := db.DB.QueryRow(query, id)
+
+	var event Event
+	err := row.Scan(&event.ID, &event.Name, &event.Description, &event.Location, &event.DateTime, &event.UserID)
+	if err != nil {
+		return nil, err
+	}
+	return &event, nil
 }
